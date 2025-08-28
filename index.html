@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Radhe Radhe Digital Counter</title>
+    <!-- Google Font for countdown -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: black;
+        color: white;
+        font-family: "Poppins", sans-serif;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Top Scroller (Radhe Radhe) */
+      .title-scroller {
+        position: fixed;
+        top: 10px;
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 4rem;
+        font-weight: bold;
+        color: #ffd700;
+        letter-spacing: 6px;
+      }
+      .title-scroller span {
+        display: inline-block;
+        padding-left: 100%;
+        animation: scroll 25s linear infinite;
+      }
+
+      @keyframes scroll {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+
+      /* GATE Countdown */
+      .countdown {
+        font-family: "Orbitron", sans-serif;
+        font-size: 2rem;
+        font-weight: 900;
+        color: #ffd700;
+        margin: 15px;
+        letter-spacing: 2px;
+        text-align: center;
+        animation: zoomPulse 2.5s ease-in-out infinite;
+      }
+
+      @keyframes zoomPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.08);
+        }
+      }
+
+      /* Counter display */
+      .clock {
+        padding: 15px 20px;
+        border: 3px solid white;
+        border-radius: 10px;
+        background: #000;
+        display: flex;
+        flex-wrap: wrap; /* responsive wrapping */
+        gap: 10px;
+        justify-content: center;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        margin: 10px;
+      }
+
+      .digit {
+        position: relative;
+        width: 40px;
+        height: 80px;
+      }
+      .segment {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+      .segment.on {
+        background: #ffffff;
+        box-shadow: 0 0 12px #ffffff, 0 0 20px rgba(255, 255, 255, 0.8);
+      }
+
+      .segment.a {
+        top: 0;
+        left: 8px;
+        width: 25px;
+        height: 8px;
+      }
+      .segment.b {
+        top: 6px;
+        right: 0;
+        width: 8px;
+        height: 30px;
+      }
+      .segment.c {
+        bottom: 6px;
+        right: 0;
+        width: 8px;
+        height: 30px;
+      }
+      .segment.d {
+        bottom: 0;
+        left: 8px;
+        width: 25px;
+        height: 8px;
+      }
+      .segment.e {
+        bottom: 6px;
+        left: 0;
+        width: 8px;
+        height: 30px;
+      }
+      .segment.f {
+        top: 6px;
+        left: 0;
+        width: 8px;
+        height: 30px;
+      }
+      .segment.g {
+        top: 36px;
+        left: 8px;
+        width: 25px;
+        height: 8px;
+      }
+
+      /* Attractive button */
+      .btn {
+        margin-top: 20px;
+        padding: 12px 25px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(45deg, #ff7f50, #ff4500);
+        border: none;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 0 12px rgba(255, 69, 0, 0.7);
+      }
+      .btn:hover {
+        background: linear-gradient(45deg, #ff4500, #ff7f50);
+        box-shadow: 0 0 18px rgba(255, 140, 0, 1);
+        transform: scale(1.08);
+      }
+      .btn:active {
+        transform: scale(0.95);
+      }
+
+      /* Bottom Scroller */
+      .scroller {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: #111;
+        color: #ffd700;
+        font-size: 1.5rem;
+        font-weight: 900;
+        padding: 8px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        border-top: 2px solid #ffd700;
+      }
+      .scroller span {
+        display: inline-block;
+        padding-left: 100%;
+        animation: scroll 25s linear infinite;
+      }
+
+      /* Popup message */
+      .popup {
+        display: none;
+        position: fixed;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #ffd700;
+        color: black;
+        padding: 15px 25px;
+        border-radius: 12px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        box-shadow: 0 0 15px #ffd700;
+        animation: fadeInOut 3s ease-in-out;
+      }
+
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        20% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+        80% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+      }
+
+      /* 📱 Mobile adjustments */
+      @media (max-width: 600px) {
+        .title-scroller {
+          font-size: 2rem;
+          letter-spacing: 3px;
+          top: 5px;
+        }
+        .countdown {
+          font-size: 1.2rem;
+          margin: 10px;
+        }
+        .clock {
+          padding: 10px;
+          gap: 5px;
+        }
+        .digit {
+          width: 25px;
+          height: 50px;
+        }
+        .btn {
+          font-size: 1rem;
+          padding: 10px 18px;
+        }
+        .scroller {
+          font-size: 1rem;
+          padding: 5px 0;
+        }
+        .popup {
+          font-size: 1.2rem;
+          padding: 10px 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top Scroller -->
+    <div class="title-scroller">
+      <span>🌸 राधे राधे 🌸 राधे राधे 🌸 राधे राधे 🌸</span>
+    </div>
+
+    <!-- GATE Countdown -->
+    <div class="countdown" id="gateCountdown"></div>
+
+    <!-- Counter -->
+    <div class="clock" id="display"></div>
+
+    <!-- Button -->
+    <button class="btn" id="incrementBtn">✨ Increase Counter ✨</button>
+
+    <!-- Popup Message -->
+    <div class="popup" id="popup">💪 Keep it up! Great, keep going! 🚀</div>
+
+    <!-- Bottom Scroller -->
+    <div class="scroller">
+      <span
+        >GATE / IES / IISC / IIT &nbsp; | &nbsp; GATE / IES / IISC / IIT &nbsp;
+        | &nbsp; GATE / IES / IISC / IIT</span
+      >
+    </div>
+
+    <script>
+      const segmentMap = {
+        0: ["a", "b", "c", "d", "e", "f"],
+        1: ["b", "c"],
+        2: ["a", "b", "g", "e", "d"],
+        3: ["a", "b", "g", "c", "d"],
+        4: ["f", "g", "b", "c"],
+        5: ["a", "f", "g", "c", "d"],
+        6: ["a", "f", "g", "c", "d", "e"],
+        7: ["a", "b", "c"],
+        8: ["a", "b", "c", "d", "e", "f", "g"],
+        9: ["a", "b", "c", "d", "f", "g"],
+      };
+
+      const display = document.getElementById("display");
+      const countdownDisplay = document.getElementById("gateCountdown");
+      const incrementBtn = document.getElementById("incrementBtn");
+      const popup = document.getElementById("popup");
+
+      let count = parseInt(localStorage.getItem("clickCount")) || 0;
+
+      function createDigit() {
+        const digit = document.createElement("div");
+        digit.className = "digit";
+        ["a", "b", "c", "d", "e", "f", "g"].forEach((seg) => {
+          const segment = document.createElement("div");
+          segment.className = `segment ${seg}`;
+          digit.appendChild(segment);
+        });
+        return digit;
+      }
+
+      function renderCounter(number) {
+        display.innerHTML = "";
+        const str = number.toString().padStart(8, "0");
+        str.split("").forEach((num) => {
+          const digitElement = createDigit();
+          segmentMap[parseInt(num)].forEach((seg) => {
+            digitElement.querySelector(`.${seg}`).classList.add("on");
+          });
+          display.appendChild(digitElement);
+        });
+      }
+
+      function updateCountdown() {
+        const examDate = new Date("2026-02-01");
+        const today = new Date();
+        const diffTime = examDate - today;
+        const diffDays = Math.max(
+          Math.ceil(diffTime / (1000 * 60 * 60 * 24)),
+          0
+        );
+        countdownDisplay.textContent = `🔥 GATE 2026 is just ${diffDays} days away! Stay consistent 🔥`;
+      }
+
+      function showPopup() {
+        popup.style.display = "block";
+        setTimeout(() => {
+          popup.style.display = "none";
+        }, 3000);
+      }
+
+      function incrementCounter() {
+        count++;
+        localStorage.setItem("clickCount", count);
+        renderCounter(count);
+
+        if (count % 1000 === 0) {
+          showPopup();
+        }
+      }
+
+      renderCounter(count);
+      updateCountdown();
+      setInterval(updateCountdown, 86400000);
+
+      document.body.addEventListener("click", incrementCounter);
+      incrementBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        incrementCounter();
+      });
+    </script>
+  </body>
+</html>
